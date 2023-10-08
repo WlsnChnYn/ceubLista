@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct{
+struct No{
     int valor;
     struct No *prox;
-}
-        No;
+};
+
+typedef struct No No;
 
 typedef struct{
     No *inicio;
