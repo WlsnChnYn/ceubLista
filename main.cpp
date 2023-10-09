@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 struct paciente {
     char nome[50];
@@ -12,28 +12,28 @@ typedef struct paciente Paciente;
 
 typedef struct paciente Fila;
 
-Fila* IniciaFila(void){
-    return NULL;
+Fila* IniciaFila(){
+    return nullptr;
 }
 
 int Vazia(Fila *fila){
-    return(fila == NULL);
+    return(fila == nullptr);
 }
 
 Fila* Enfila(Fila* fila, char* nome, int estado){
 
     Paciente* aux;
-    Paciente* novo = (Paciente *) malloc(sizeof(Paciente));
+    auto* novo = (Paciente *) malloc(sizeof(Paciente));
     strcpy(novo->nome, nome);
     novo->estado = estado;
-    novo->prox = NULL;
+    novo->prox = nullptr;
 
-    if (fila == NULL || estado > fila->estado) {
+    if (Vazia(fila) || estado > fila->estado) {
         novo->prox = fila;
         fila = novo;
     } else {
         aux = fila;
-        while (aux->prox != NULL && estado <= aux->prox->estado) {
+        while (aux->prox != nullptr && estado <= aux->prox->estado) {
             aux = aux->prox;
         }
         novo->prox = aux->prox;
@@ -49,7 +49,7 @@ Fila * Desenfila(Fila *fila) {
 
     if(Vazia(fila)){
         printf("Fila vazia \n\n");
-        return (Fila *) NULL;
+        return (Fila *) nullptr;
     }
 
     q = fila;
@@ -68,7 +68,7 @@ void imprimir_inicio_ao_fim(Fila *fila) {
     } else {
         printf("Fila de espera completa e em ordem de prioridade: \n");
         pac = fila;
-        while (pac != NULL) {
+        while (pac != nullptr) {
             printf("# %d - %s\n", pac->estado, pac->nome);
             pac = pac->prox;
         }
