@@ -5,7 +5,7 @@
 struct paciente {
     char nome[50];
     int estado;
-    paciente* prox;
+    struct paciente* prox;
 };
 
 typedef struct paciente Paciente;
@@ -28,16 +28,13 @@ Fila* Enfila(Fila* fila, char* nome, int estado){
     novo->estado = estado;
     novo->prox = NULL;
 
-    if (fila == NULL) {
-        printf("aqui null");
-
+    if (fila == NULL || estado > fila->estado) {
+        novo->prox = fila;
         fila = novo;
     } else {
         aux = fila;
-        while (aux->prox != NULL && novo->estado <= aux->prox->estado) {
-        printf("aqui not null");
+        while (aux->prox != NULL && estado <= aux->prox->estado) {
             aux = aux->prox;
-        printf("aqui not null fim");
         }
         novo->prox = aux->prox;
         aux->prox = novo;
@@ -64,15 +61,39 @@ Fila * Desenfila(Fila *fila) {
     return fila;
 }
 
-int main(){
-    Fila* fila = IniciaFila();
+void imprimir_inicio_ao_fim(Fila *fila) {
+    Paciente *pac;
+    if (Vazia(fila)) {
+        printf("\nFila Vazia!!");
+    } else {
+        printf("Fila de espera completa e em ordem de prioridade: \n");
+        pac = fila;
+        while (pac != NULL) {
+            printf("# %d - %s\n", pac->estado, pac->nome);
+            pac = pac->prox;
+        }
+    }
+}
 
-    fila = Enfila(fila, "fulano", 3);
-    fila = Enfila(fila, "fulanoooooo", 1);
-    fila = Enfila(fila, "fulanaaaaa", 2);
-    fila = Enfila(fila, "fulaneeeee", 3);
-    fila = Enfila(fila, "fulan@", 2);
-    fila = Enfila(fila, "fulanoooooofasdfasdrfewav", 2);
+int main(){
+
+    Fila* fila = IniciaFila();
+    int estado;
+    char nome[25];
+    int i, max=6;
+
+    for (i = 0 ; i <= max ; i++) {
+        printf("Nome do paciente: ");
+        scanf("%s", &nome);
+
+        do {
+            printf("\n Selecione o estado do paciente: \n1 - pouco urgente \n2 - urgente \n3 - muito urgente \n\n");
+            scanf("%d", &estado);
+        } while ((estado != 1) && (estado != 2) && (estado != 3));
+
+        fila = Enfila(fila, nome, estado);
+        imprimir_inicio_ao_fim(fila);
+    }
 
     printf("\nFIM DA ENTRADA (atendendo por ordem de prioridade)\n\n");
 
