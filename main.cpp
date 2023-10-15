@@ -20,28 +20,21 @@ int Vazia(Fila *fila){
     return(fila == nullptr);
 }
 
-Fila* Enfila(Fila* fila, char* nome, int estado){
+Fila* Enfila(Fila* fila, Paciente* novo){
+    if (Vazia(fila) || novo->estado > fila->estado) {
+        novo->prox = fila;
+        return novo;
+    }
+    fila->prox = Enfila(fila->prox, novo);
+    return fila;
+}
 
-    Paciente* aux;
+Paciente *novoPaciente(const char *nome, int estado) {
     auto* novo = (Paciente *) malloc(sizeof(Paciente));
     strcpy(novo->nome, nome);
     novo->estado = estado;
     novo->prox = nullptr;
-
-    if (Vazia(fila) || estado > fila->estado) {
-        novo->prox = fila;
-        fila = novo;
-    } else {
-        aux = fila;
-        while (aux->prox != nullptr && estado <= aux->prox->estado) {
-            aux = aux->prox;
-        }
-        novo->prox = aux->prox;
-        aux->prox = novo;
-
-    }
-
-    return fila;
+    return novo;
 }
 
 Fila * Desenfila(Fila *fila) {
@@ -76,7 +69,7 @@ void imprimir_inicio_ao_fim(Fila *fila) {
 }
 
 int main(){
-
+    Paciente* paciente;
     Fila* fila = IniciaFila();
     int estado;
     char nome[25];
@@ -91,7 +84,8 @@ int main(){
             scanf("%d", &estado);
         } while ((estado != 1) && (estado != 2) && (estado != 3));
 
-        fila = Enfila(fila, nome, estado);
+        paciente = novoPaciente(nome, estado);
+        fila = Enfila(fila, paciente);
         imprimir_inicio_ao_fim(fila);
     }
 
