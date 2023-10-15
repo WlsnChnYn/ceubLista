@@ -1,189 +1,104 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-typedef struct{
+struct paciente {
     char nome[50];
     int estado;
-    struct Paciente *prox;
-}
-        Paciente;
+    struct paciente* prox;
+};
 
-typedef struct{
-    Paciente *inicio;
-    Paciente *fim;
-    int tamanho;
-}
-        Fila;
+typedef struct paciente Paciente;
 
-void IniciaFila(Fila *fila){
-    fila->fim = NULL;
-    fila->inicio = NULL;
-    fila->tamanho = 0;
+typedef struct paciente Fila;
+
+Fila* IniciaFila(){
+    return nullptr;
 }
 
 int Vazia(Fila *fila){
-    return(fila->fim == NULL);
+    return(fila == nullptr);
 }
 
-void Enfila(int x, Fila *fila){
+Fila* Enfila(Fila* fila, char* nome, int estado){
 
-    Paciente *pac1, *pac2;
+    Paciente* aux;
+    auto* novo = (Paciente *) malloc(sizeof(Paciente));
+    strcpy(novo->nome, nome);
+    novo->estado = estado;
+    novo->prox = nullptr;
 
-    pac1 = (Paciente *) malloc(sizeof(Paciente));
-    pac2 = (Paciente *) malloc(sizeof(Paciente));
-
-    pac2->estado = x;
-    pac2->prox = NULL;
-
-    if (fila->fim == NULL){
-        fila->inicio = pac1;
-    }
-    else{
-        fila->fim->prox = pac1;
-        pac1 = pac1->prox;
-        pac1->prox = x;
-    }
-}
-
-void inserir_prioridade_alta(Fila *fila, Paciente *paciente){
-    Paciente *pac1, *pac2;
-
-    pac1 = (Paciente *) malloc(sizeof(Paciente));
-    pac2 = (Paciente *) malloc(sizeof(Paciente));
-
-    pac2->estado = x;
-    pac2->prox = NULL
-
-    if(fila->fim == NULL){
-        fila->inicio = pac1;
-    }
-    else{
-        if(x>2){
-            if(fila->inicio->estado<3){
-                pac1->estado = fila->inicio;
-                fila->inicio = pac1;
-            }
-            else{
-                pac1 = fila->inicio;
-                while(pac1->prox && pac1->prox->estado > 2){
-                    pac1 = pac1->prox;
-                    pac2->prox = pac1->prox;
-
-                }
-            }
+    if (Vazia(fila) || estado > fila->estado) {
+        novo->prox = fila;
+        fila = novo;
+    } else {
+        aux = fila;
+        while (aux->prox != nullptr && estado <= aux->prox->estado) {
+            aux = aux->prox;
         }
-        else {
-            pac1 = fila->fim;
-            while (pac1->prox){
-                pac1 = pac1->prox;
-                pac1->prox = pac2;
-            }
-        }
+        novo->prox = aux->prox;
+        aux->prox = novo;
 
     }
+
+    return fila;
 }
 
-void inserir_prioridade_media (Paciente Fila *fila, int grav){
-Paciente *pac1, *pac2;
-
-pac1 = (Paciente *) malloc(sizeof(Paciente));
-pac2 = (Paciente *) malloc(sizeof(Paciente));
-
-pac2->estado = x;
-pac2->prox = NULL
-
-if (fila->fim == NULL){
-fila->inicio = pac1;
-}
-else{
-if(x>1){
-if(fila->inicio->estado<2){
-pac1->estado = fila->inicio;
-fila->inicio = pac1;
-}
-else{
-pac1 = fila->inicio;
-while(pac1->prox && pac1->prox->estado > 2){
-pac1 = pac1->prox;
-pac2->prox = pac1->prox;
-
-}
-
-}
-}
-else {
-pac1 = fila->fim;
-while (pac1->prox){
-pac1 = pac1->prox;
-pac1->prox = pac2;
-}
-}
-
-}
-}
-
-int Desenfila(Fila *fila){
-    Paciente *q;
-    int v;
+Fila * Desenfila(Fila *fila) {
+    Paciente* q;
 
     if(Vazia(fila)){
         printf("Fila vazia \n\n");
-        return 0;
+        return (Fila *) nullptr;
     }
 
-    q = fila->inicio;
-    v = q->estado;
-    fila->inicio = q->prox;
-
-    if(fila->inicio == NULL){
-        fila->fim = NULL;
-    }
+    q = fila;
+    fila = fila->prox;
+    printf("# Prioridade %d: %s \n", q->estado, q->nome);
 
     free(q);
-    fila->tamanho--;
-    return v;
+
+    return fila;
 }
 
-void imprimir_inicio_ao_fim(Fila *fila){
-    if (fila->inicio == NULL){
+void imprimir_inicio_ao_fim(Fila *fila) {
+    Paciente *pac;
+    if (Vazia(fila)) {
         printf("\nFila Vazia!!");
-    }
-    else{
-        pac1 = fila->inicio;
-        do{
-            printf(" %d ", pac1->num);
-            pac1 = pac1->prox;
-        }while(pac1 != NULL);
+    } else {
+        printf("Fila de espera completa e em ordem de prioridade: \n");
+        pac = fila;
+        while (pac != nullptr) {
+            printf("# %d - %s\n", pac->estado, pac->nome);
+            pac = pac->prox;
+        }
     }
 }
 
 int main(){
-    Paciente estado, nome;
 
-    printf("Nome do paciente: ");
-    scanf("%s", &nome);
+    Fila* fila = IniciaFila();
+    int estado;
+    char nome[25];
+    int i, max=6;
 
-    do{
-        printf("\n Selecione o estado do paciente: \n1 - pouco urgente \n2 - urgente \n3 - muito urgente \n\n");
-        scanf ("%d", &estado);
-    } while ((estado != 1) && (estado != 2) && (estado != 3));
+    for (i = 0 ; i <= max ; i++) {
+        printf("Nome do paciente: ");
+        scanf("%s", &nome);
 
-    switch(estado){
-        case 1:
-            Enfila(nome, &fila);
-            break;
+        do {
+            printf("\n Selecione o estado do paciente: \n1 - pouco urgente \n2 - urgente \n3 - muito urgente \n\n");
+            scanf("%d", &estado);
+        } while ((estado != 1) && (estado != 2) && (estado != 3));
 
-        case 2:
-            inserir_prioridade_media(nome, &fila);
-            break;
-
-        case 3:
-            inserir_prioridade_alta(nome, &fila);
-            break;
-        default:
-            printf("erro");
+        fila = Enfila(fila, nome, estado);
+        imprimir_inicio_ao_fim(fila);
     }
 
-    printf("Fila de espera completa e em ordem de prioridade: \n")
-    imprimir_inicio_ao_fim(fila);
+    printf("\nFIM DA ENTRADA (atendendo por ordem de prioridade)\n\n");
+
+    do {
+        fila = Desenfila(fila);
+    } while (!Vazia(fila));
+
 }
